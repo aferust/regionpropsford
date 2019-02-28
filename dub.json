@@ -9,6 +9,9 @@
 	"copyright": "Copyright © 2019, Ferhat Kurtulmuş",
 	"license": "Boost",
 	"name": "regionpropsforD",
+    "version": "0.0.1",
+    "importPaths": ["source"],
+    "sourcePaths": ["source"],
     "configurations": [
         {
             "name": "library",
