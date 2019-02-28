@@ -47,7 +47,8 @@ immutable int[4] dy4 = [0, 1,  0, -1];
 immutable int[8] dx8 = [1, -1, 1, 0, -1,  1,  0, -1];
 immutable int[8] dy8 = [0,  0, 1, 1,  1, -1, -1, -1];
 
-private void dfs4(int x, int y, ubyte current_label, ubyte[] label, Mat2D!ubyte img) {
+private void dfs4(int x, int y, ubyte current_label, ubyte[] label, Mat2D!ubyte img) 
+{
     if (x < 0 || x == row_count) return;
     if (y < 0 || y == col_count) return;
     if (label[x*col_count + y] || !img.data[x*col_count + y]) return;
@@ -58,7 +59,8 @@ private void dfs4(int x, int y, ubyte current_label, ubyte[] label, Mat2D!ubyte 
         dfs4(x + dx4[direction], y + dy4[direction], current_label, label, img);
 }
 
-private void dfs8(int x, int y, ubyte current_label, ubyte[] label, Mat2D!ubyte img) {
+private void dfs8(int x, int y, ubyte current_label, ubyte[] label, Mat2D!ubyte img) 
+{
     if (x < 0 || x == row_count) return;
     if (y < 0 || y == col_count) return;
     if (label[x*col_count + y] || !img.data[x*col_count + y]) return;
@@ -69,7 +71,8 @@ private void dfs8(int x, int y, ubyte current_label, ubyte[] label, Mat2D!ubyte 
         dfs8(x + dx8[direction], y + dy8[direction], current_label, label, img);
 }
 
-Mat2D!ubyte bwlabel(Mat2D!ubyte img, uint conn = 8){
+Mat2D!ubyte bwlabel(Mat2D!ubyte img, uint conn = 8)
+{
     /* The algorithm is based on:
      * https://stackoverflow.com/questions/14465297/connected-component-labelling
      */
@@ -107,7 +110,8 @@ XYList bin2coords(Mat2D!ubyte img)
     
     foreach (int i; 0..row_count) 
         foreach (int j; 0..col_count)
-            if(img.data[i*col_count + j] == 255){
+            if(img.data[i*col_count + j] == 255)
+            {
                     coords.xs ~= j;
                     coords.ys ~= i;
             }
@@ -121,9 +125,8 @@ Mat2D!ubyte coords2mat(XYList xylist, Rectangle rect)
     
     auto n = cast(int)xylist.xs.length;
     
-    foreach(int i; 0..n){
-        //writeln(i);
-        //writeln(xylist.xs[i]-rect.x, " ", xylist.ys[i]-rect.y);
+    foreach(int i; 0..n)
+    {
         im[xylist.ys[i]-rect.y, xylist.xs[i]-rect.x] = 255;
     }
     return im;   
@@ -164,16 +167,16 @@ getContinousBoundaryPoints( Mat2D!ubyte unpadded)
         int nImageSize = Width_i * Height_i;
         
         int[][] Offset = [
-                                [ -1, -1 ],       //  +----------+----------+----------+
-                                [ 0, -1 ],        //  |          |          |          |
-                                [ 1, -1 ],        //  |(x-1,y-1) | (x,y-1)  |(x+1,y-1) |
-                                [ 1, 0 ],         //  +----------+----------+----------+
-                                [ 1, 1 ],         //  |(x-1,y)   |  (x,y)   |(x+1,y)   |
-                                [ 0, 1 ],         //  |          |          |          |
-                                [ -1, 1 ],        //  +----------+----------+----------+
-                                [ -1, 0 ]         //  |          | (x,y+1)  |(x+1,y+1) |
-                            ];                    //  |(x-1,y+1) |          |          |
-                                                  //  +----------+----------+----------+
+                            [ -1, -1 ],
+                            [  0, -1 ], 
+                            [  1, -1 ],  
+                            [  1,  0 ], 
+                            [  1,  1 ],
+                            [  0,  1 ], 
+                            [ -1,  1 ],
+                            [ -1,  0 ]
+        ];
+        
         const int NEIGHBOR_COUNT = 8;
         auto BoundaryPixelCord = Point(0, 0);
         auto BoundaryStartingPixelCord = Point(0, 0);
@@ -329,7 +332,8 @@ bboxesAndIdxFromLabelImage(Mat2D!ubyte labelIm)
     return tuple(rects, segmentedImgIdx);
 }
 
-Mat2D!ubyte idxListToSubImage(Rectangle rect, XYList idxlist){
+Mat2D!ubyte idxListToSubImage(Rectangle rect, XYList idxlist)
+{
     
     auto res = Mat2D!ubyte(rect.height, rect.width);
     
@@ -343,14 +347,16 @@ Mat2D!ubyte idxListToSubImage(Rectangle rect, XYList idxlist){
     
 }
 
-Mat2D!ubyte subImage(Mat2D!ubyte img, Rectangle ROI){
+Mat2D!ubyte subImage(Mat2D!ubyte img, Rectangle ROI)
+{
     //this copies vals for new image :(
     int col_count = cast(int)img.width;
     auto subIm = Mat2D!ubyte(ROI.height, ROI.width);
     ubyte* ptr = subIm.data.ptr;
     
     foreach (int i; ROI.y..ROI.y+ROI.height) 
-        foreach (int j; ROI.x..ROI.x+ROI.width){
+        foreach (int j; ROI.x..ROI.x+ROI.width)
+        {
             *ptr = img.data[i*col_count + j];
             ptr ++;
         }
@@ -358,7 +364,8 @@ Mat2D!ubyte subImage(Mat2D!ubyte img, Rectangle ROI){
     return subIm;
 }
 
-private void setValAtIdx(Mat2D!ubyte img, XYList xylist, int val){
+private void setValAtIdx(Mat2D!ubyte img, XYList xylist, int val)
+{
     uint row_count = cast(uint)img.height;
     uint col_count = cast(uint)img.width;
     //int pad = 2;
@@ -380,7 +387,8 @@ import measure.chull;
 import measure.ellipsefit;
 import measure.moments;
 
-class RegionProps{
+class RegionProps
+{
     /* test it like:
     auto img = loadImage("test.png");
     auto imgbin = otsuBinarization(img);
@@ -405,7 +413,8 @@ class RegionProps{
     
     int count = 0;
     
-    this(Mat2D!ubyte imbin){
+    this(Mat2D!ubyte imbin)
+    {
         parentHeight = cast(uint)imbin.height;
         parentWidth = cast(uint)imbin.width;
         
@@ -422,8 +431,10 @@ class RegionProps{
         regions.length = count;
     }
     
-    void calculateProps(){
-        foreach(i; 0..count){
+    void calculateProps()
+    {
+        foreach(i; 0..count)
+        {
             Region region = new Region();
             region.bBox = bboxes[i];
             Mat2D!ubyte imsub = idxListToSubImage(bboxes[i],coords[i]);

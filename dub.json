@@ -1,5 +1,5 @@
 {
-	"description": "A minimal D application.",
+	"description": "A regionprops implementation for D",
     "dependencies": {
         "dlib": "~master"
 	},
