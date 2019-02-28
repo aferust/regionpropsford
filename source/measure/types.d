@@ -282,6 +282,37 @@ struct Mat2D(T)
     }
 }
 
+/+ planned for performance, but it badly affects the speed for some reason?
+struct ROIViewOfMat2D(T)
+{
+    T* data;
+    size_t rows;
+    size_t cols;
+    
+    alias height = rows;
+    alias width = cols;
+    
+    Rectangle roi;
+    
+    this(T)(Mat2D!T parentMat, Rectangle _roi)
+    {
+        data = parentMat.data.ptr;
+        rows = parentMat.rows;
+        cols = parentMat.cols;
+        roi = _roi;
+    }
+    
+    T opIndex( size_t _i, size_t _j)
+    {
+        size_t i = _i + roi.y;
+        size_t j = _j + roi.x;
+        
+        assert((i < rows) && (j < cols), "index out of bounds!");
+        return data[i * cols + j];
+    }
+}
++/
+
 void getCofactor(T)(Mat2D!T A, Mat2D!double temp, int p, int q, ulong n) { 
     int i = 0, j = 0; 
   
