@@ -23,9 +23,9 @@ Example usage with dlib:
       rp.calculateProps();
       /+
       now you can access blob properties like:
-      regions[0].orientation
-      regions[0].majorAxisLength
-      regions[3].area
+      rp.regions[0].orientation
+      rp.regions[0].majorAxisLength
+      rp.regions[3].area
       +/
       auto res = new Image!(PixelFormat.L8)(col_count, row_count);
       res.data[] = imgbin.data[];
