@@ -24,8 +24,6 @@ DEALINGS IN THE SOFTWARE.
 
 module measure.regionprops;
 
-import dlib.image;
-
 import std.stdio;
 import std.math;
 import std.typecons;
