@@ -1,0 +1,25 @@
+{
+	"description": "A minimal D application.",
+    "dependencies": {
+        "dlib": "~master"
+	},
+	"authors": [
+		"Ferhat Kurtulmuş"
+	],
+	"copyright": "Copyright © 2019, Ferhat Kurtulmuş",
+	"license": "Boost",
+	"name": "regionpropsforD",
+    "configurations": [
+        {
+            "name": "library",
+            "targetType": "library",
+            "sourcePaths": ["source"]
+        },
+        {
+            "name": "import",
+            "targetType": "sourceLibrary",
+            "sourceFiles-posix": ["libregionpropsforD.a"],
+            "sourceFiles-windows": ["regionpropsforD.lib"]
+        }
+    ]
+}
