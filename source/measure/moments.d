@@ -47,8 +47,6 @@ Tuple!(ulong[], ulong[]) grid(uint rows, uint cols){
 }
 
 void calculateMoments(Region region){
-    // based on: https://github.com/shackenberg/Image-Moments-in-Python
-    
     auto imbin = region.image;
     
     XYList xylist = region.pixelList;
@@ -57,11 +55,9 @@ void calculateMoments(Region region){
     auto yGrid = mgrid[1];
     
     double m00 = 0, m10 = 0, m01 = 0, m20 = 0, m11 = 0, m02 = 0, m30 = 0, m21 = 0, m12 = 0, m03 = 0;
-    //double mu20 = 0, mu11 = 0, mu02 = 0, mu30 = 0, mu21 = 0, mu12 = 0, mu03 = 0;
-    double mean_x = 0, mean_y = 0;
-    //double nu20 = 0, nu11 = 0, nu02 = 0, nu30 = 0, nu21 = 0, nu12 = 0, nu03 = 0;
     
-    // raw or spatial moments
+    double mean_x = 0, mean_y = 0;
+    
     m00 = xylist.xs.length;
     
     foreach(i; 0..imbin.height * imbin.width){
@@ -75,35 +71,8 @@ void calculateMoments(Region region){
         m03 += (xGrid[i]^^3)*(imbin.data[i]/255);
         m30 += (yGrid[i]^^3)*(imbin.data[i]/255);
     }
-    /*
-    // central moments
-    mean_x = m01/m00;
-    mean_y = m10/m00;
     
-    foreach(i; 0..imbin.height * imbin.width){ // for now, an extra loop is required here
-        mu11 += (xGrid[i] - mean_x) * (yGrid[i] - mean_y)*(imbin.data[i]/255);
-        mu02 += ((yGrid[i] - mean_y)^^2)*(imbin.data[i]/255);
-        mu20 += ((xGrid[i] - mean_x)^^2)*(imbin.data[i]/255);
-        mu12 += (xGrid[i] - mean_x) * ((yGrid[i] - mean_y)^^2)*(imbin.data[i]/255);
-        mu21 += ((xGrid[i] - mean_x)^^2) * (yGrid[i] - mean_y)*(imbin.data[i]/255);
-        mu03 += ((yGrid[i] - mean_y)^^3)*(imbin.data[i]/255);
-        mu30 += ((xGrid[i] - mean_x)^^3)*(imbin.data[i]/255);
-    }
-    
-    // central standardized or normalized or scale invariant moments
-    nu11 = mu11 / m00^^(2);
-    nu12 = mu12 / m00^^(2.5);
-    nu21 = mu21 / m00^^(2.5);
-    nu20 = mu20 / m00^^(2);
-    nu03 = mu03 / m00^^(2.5); // skewness
-    nu30 = mu30 / m00^^(2.5); // skewness
-    */
     region.m00 = m00; region.m10 = m10; region.m01 = m01; region.m20 = m20;
     region.m11 = m11; region.m02 = m02; region.m30 = m30; region.m21 = m21;
     region.m12 = m12; region.m03 = m03; 
-    /*
-    region.mu20 = mu20; region.mu11 = mu11; region.mu02 = mu02;
-    region.mu30 = mu30; region.mu21 = mu21; region.mu12 = mu12; region.mu03 = mu03;
-    region.nu20 = nu20; region.nu11 = nu11; region.nu02 = nu02;
-    region.nu30 = nu30; region.nu21 = nu21; region.nu12 = nu12; region.nu03 = nu03;*/
 }

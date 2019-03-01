@@ -72,12 +72,8 @@ struct Point {
 class Region{
     Mat2D!ubyte image;
     
-    // moments
+    // spatial raw moments
     double m00, m10, m01, m20, m11, m02, m30, m21, m12, m03;
-    /* TODO: compute with a separate function
-    double mu20, mu11, mu02, mu30, mu21, mu12, mu03;
-    double nu20, nu11, nu02, nu30, nu21, nu12, nu03;
-    */
     
     ulong area;
     double areaFromContour;

@@ -34,7 +34,8 @@ import measure.types;
 import measure.regionprops;
 import measure.eigen;
 
-Ellipse ellipseFit(XYList xylist) // gives exact results with matlab
+// gives exact results of matlab
+Ellipse ellipseFit(XYList xylist)
 {
     double meanX = xylist.xs.mean;
     double meanY = xylist.ys.mean;
@@ -99,7 +100,8 @@ Mat2D!double covNx2(U)(U[] xs, U[] ys)
     return rescov;
 }
 
-Ellipse ellipseFit2(Region rg) // gives exact results with matlab and 1 ms faster :)
+// gives exact results of matlab and 1 ms faster :)
+Ellipse ellipseFit2(Region rg) @nogc
 {
     double center_x = rg.m10/rg.m00;
     double center_y = rg.m01/rg.m00;
@@ -113,15 +115,6 @@ Ellipse ellipseFit2(Region rg) // gives exact results with matlab and 1 ms faste
     
     double axis1 = sqrt(8*(a+c-sqrt(b^^2+(a-c)^^2)))/2;
     double axis2 = sqrt(8*(a+c+sqrt(b^^2+(a-c)^^2)))/2;
-    
-    double d = sqrt(axis2^^2-axis1^^2);
-    double x1 = center_x + d*cos(theta);
-    double y1 = center_y + d*sin(theta);
-    double x2 = center_x - d*cos(theta);
-    double y2 = center_y - d*sin(theta);
-    
-    XYList xylist = rg.pixelList;
-    auto npoints = xylist.xs.length;
 
     double orientation;
     if (axis1 == axis2)
