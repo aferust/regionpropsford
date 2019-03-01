@@ -69,8 +69,8 @@ Ellipse ellipseFit(XYList xylist)
 
 Mat2D!double covNx2(U)(U[] xs, U[] ys)
 {
-    int npoints = cast(int)xs.length;
-    int _npoints = cast(int)ys.length;
+    auto npoints = xs.length;
+    auto _npoints = ys.length;
     
     assert(npoints == _npoints, "array sizes are mismatch!");
     

@@ -13,7 +13,7 @@ import measure.regionprops;
 */
 
 XYList convexHull(XYList _p) {
-    int n = cast(int)_p.xs.length;
+    auto n = _p.xs.length;
     assert( n >= 3, "Convex hull not possible");
     
     Point[] p; p.length = n; foreach(i; 0..n) p[i] = Point(_p.xs[i], _p.ys[i]);

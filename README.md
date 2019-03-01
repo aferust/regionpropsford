@@ -27,7 +27,7 @@ Example usage with dlib:
       rp.regions[0].majorAxisLength
       rp.regions[3].area
       +/
-      auto res = new Image!(PixelFormat.L8)(col_count, row_count);
+      auto res = new Image!(PixelFormat.L8)(_imgbin.width, _imgbin.height);
       res.data[] = imgbin.data[];
 
       foreach(i, region; rp.regions){ // mark the centroids

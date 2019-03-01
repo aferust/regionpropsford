@@ -34,10 +34,14 @@ import measure.types;
 import measure.chull;
 
 
-alias DfsFun = void function(int, int, ubyte, ubyte[], Mat2D!ubyte);
 
-uint row_count;
-uint col_count;
+private
+{
+    alias DfsFun = void function(size_t, size_t, ubyte, ubyte[], Mat2D!ubyte);
+    size_t row_count;
+    size_t col_count;
+}
+
 
 immutable int[4] dx4 = [1, 0, -1,  0];
 immutable int[4] dy4 = [0, 1,  0, -1];
@@ -45,7 +49,7 @@ immutable int[4] dy4 = [0, 1,  0, -1];
 immutable int[8] dx8 = [1, -1, 1, 0, -1,  1,  0, -1];
 immutable int[8] dy8 = [0,  0, 1, 1,  1, -1, -1, -1];
 
-private void dfs4(int x, int y, ubyte current_label, ubyte[] label, Mat2D!ubyte img) 
+private void dfs4(size_t x, size_t y, ubyte current_label, ubyte[] label, Mat2D!ubyte img) 
 {
     if (x < 0 || x == row_count) return;
     if (y < 0 || y == col_count) return;
@@ -57,7 +61,7 @@ private void dfs4(int x, int y, ubyte current_label, ubyte[] label, Mat2D!ubyte 
         dfs4(x + dx4[direction], y + dy4[direction], current_label, label, img);
 }
 
-private void dfs8(int x, int y, ubyte current_label, ubyte[] label, Mat2D!ubyte img) 
+private void dfs8(size_t x, size_t y, ubyte current_label, ubyte[] label, Mat2D!ubyte img) 
 {
     if (x < 0 || x == row_count) return;
     if (y < 0 || y == col_count) return;
@@ -75,8 +79,8 @@ Mat2D!ubyte bwlabel(Mat2D!ubyte img, uint conn = 8)
      * https://stackoverflow.com/questions/14465297/connected-component-labelling
      */
     
-    row_count = cast(uint)img.height;
-    col_count = cast(uint)img.width;
+    row_count = img.height;
+    col_count = img.width;
     
     auto label = uninitializedArray!(ubyte[])(row_count*col_count);
     auto res = Mat2D!ubyte(row_count, col_count);
@@ -89,8 +93,8 @@ Mat2D!ubyte bwlabel(Mat2D!ubyte img, uint conn = 8)
         dfs = &dfs8;
     
     ubyte component = 0;
-    foreach (int i; 0..row_count) 
-        foreach (int j; 0..col_count)
+    foreach (i; 0..row_count) 
+        foreach (j; 0..col_count)
             if (!label[i*col_count + j] && img.data[i*col_count + j]) dfs(i, j, ++component, label, img);
     
     // the number of blobs is "label.maxElement"
@@ -101,17 +105,17 @@ Mat2D!ubyte bwlabel(Mat2D!ubyte img, uint conn = 8)
 
 XYList bin2coords(Mat2D!ubyte img)
 {
-    uint row_count = cast(uint)img.height;
-    uint col_count = cast(uint)img.width;
+    size_t rc = img.height;
+    size_t cc = img.width;
     
     XYList coords;
     
-    foreach (int i; 0..row_count) 
-        foreach (int j; 0..col_count)
-            if(img.data[i*col_count + j] == 255)
+    foreach (i; 0..rc) 
+        foreach (j; 0..cc)
+            if(img.data[i*cc + j] == 255)
             {
-                    coords.xs ~= j;
-                    coords.ys ~= i;
+                    coords.xs ~= cast(int)j;
+                    coords.ys ~= cast(int)i;
             }
     
     return coords;
@@ -121,9 +125,9 @@ Mat2D!ubyte coords2mat(XYList xylist, Rectangle rect)
 {
     auto im = Mat2D!ubyte(rect.height, rect.width);
     
-    auto n = cast(int)xylist.xs.length;
+    auto n = xylist.xs.length;
     
-    foreach(int i; 0..n)
+    foreach(i; 0..n)
     {
         im[xylist.ys[i]-rect.y, xylist.xs[i]-rect.x] = 255;
     }
@@ -132,9 +136,6 @@ Mat2D!ubyte coords2mat(XYList xylist, Rectangle rect)
 
 private void _setValAtIdx_with_padding(Mat2D!ubyte img, XYList xylist, int val, int pad = 2)
 {
-    uint row_count = cast(uint)img.height;
-    uint col_count = cast(uint)img.width;
-    
     foreach (i; 0..xylist.xs.length)
         img[xylist.ys[i]+pad/2, xylist.xs[i]+pad/2] = cast(ubyte)val;
 }
@@ -146,8 +147,8 @@ getContinousBoundaryPoints( Mat2D!ubyte unpadded)
     // https://www.codeproject.com/Articles/1105045/Tracing-Boundary-in-D-Image-Using-Moore-Neighborho
     // https://www.codeproject.com/info/cpol10.aspx
     // author Udaya K Unnikrishnan
-    int _rows = cast(int)unpadded.height;
-    int _cols = cast(int)unpadded.width;
+    auto _rows = unpadded.height;
+    auto _cols = unpadded.width;
     int pad = 2;
     
     auto region = Mat2D!ubyte(_rows + pad, _cols + pad);
@@ -263,14 +264,14 @@ getContinousBoundaryPoints( Mat2D!ubyte unpadded)
 
 double contourArea(XYList xylist)
 {
-    int npoints = cast(int)xylist.xs.length;
+    auto npoints = xylist.xs.length;
     auto xx = xylist.xs;
     auto yy = xylist.ys;
     
     double area = 0.0;
     
     foreach(i; 0..npoints){
-        int j = (i + 1) % npoints;
+        auto j = (i + 1) % npoints;
         area += xx[i] * yy[j];
         area -= xx[j] * yy[i];
     }
@@ -281,7 +282,7 @@ double contourArea(XYList xylist)
 double arcLength(XYList xylist)
 {
     double perimeter = 0.0, xDiff = 0.0, yDiff = 0.0;
-    for( int k = 0; k < xylist.xs.length-1; k++ ) {
+    for( auto k = 0; k < xylist.xs.length-1; k++ ) {
         xDiff = xylist.xs[k+1] - xylist.xs[k];
         yDiff = xylist.ys[k+1] - xylist.ys[k];
         perimeter += pow( xDiff*xDiff + yDiff*yDiff, 0.5 );
@@ -307,20 +308,20 @@ Rectangle boundingBox(XYList xylist)
 Tuple!(Rectangle[], XYList[])
 bboxesAndIdxFromLabelImage(Mat2D!ubyte labelIm)
 {
-    uint row_count = cast(uint)labelIm.height;
-    uint col_count = cast(uint)labelIm.width;
+    auto rc = labelIm.height;
+    auto cc = labelIm.width;
     
     immutable int ncomps = labelIm.data.maxElement;
     
     XYList[] segmentedImgIdx;
     segmentedImgIdx.length = ncomps;
     
-    foreach (int i; 0..row_count) 
-        foreach (int j; 0..col_count)
+    foreach (i; 0..rc) 
+        foreach (j; 0..cc)
             foreach(label; 0..ncomps){
-                if(labelIm.data[i*col_count + j] == label+1){
-                    segmentedImgIdx[label].xs ~= j;
-                    segmentedImgIdx[label].ys ~= i;
+                if(labelIm.data[i*cc + j] == label+1){
+                    segmentedImgIdx[label].xs ~= cast(uint)j;
+                    segmentedImgIdx[label].ys ~= cast(uint)i;
                 }
             }
     Rectangle[] rects; rects.length = ncomps;
@@ -348,32 +349,29 @@ Mat2D!ubyte idxListToSubImage(Rectangle rect, XYList idxlist)
 Mat2D!ubyte subImage(Mat2D!ubyte img, Rectangle ROI)
 {
     //this copies vals for new image :(
-    int col_count = cast(int)img.width;
+    auto cc =img.width;
     auto subIm = Mat2D!ubyte(ROI.height, ROI.width);
     ubyte* ptr = subIm.data.ptr;
     
     foreach (int i; ROI.y..ROI.y+ROI.height) 
         foreach (int j; ROI.x..ROI.x+ROI.width)
         {
-            *ptr = img.data[i*col_count + j];
+            *ptr = img.data[i*cc + j];
             ptr ++;
         }
     
     return subIm;
 }
 
-private void setValAtIdx(Mat2D!ubyte img, XYList xylist, int val)
+private void setValAtIdx(T)(Mat2D!T img, XYList xylist, T val)
 {
-    uint row_count = cast(uint)img.height;
-    uint col_count = cast(uint)img.width;
-    //int pad = 2;
     foreach (i; 0..xylist.xs.length)
-        img[xylist.ys[i], xylist.xs[i]] = 255;
+        img[xylist.ys[i], xylist.xs[i]] = val;
 }
 
 void addXYOffset(ref XYList xylist, int xOffset, int yOffset)
 {
-    auto npoints = cast(int)xylist.xs.length;
+    auto npoints = xylist.xs.length;
     foreach(i; 0..npoints)
     {
         xylist.xs[i] += xOffset;
@@ -403,18 +401,18 @@ class RegionProps
     Mat2D!ubyte parentBin;
     Mat2D!ubyte labelIm;
     
-    uint parentHeight;
-    uint parentWidth;
+    size_t parentHeight;
+    size_t parentWidth;
     
     Rectangle[] bboxes;
     XYList[] coords;
     
-    int count = 0;
+    size_t count = 0;
     
     this(Mat2D!ubyte imbin)
     {
-        parentHeight = cast(uint)imbin.height;
-        parentWidth = cast(uint)imbin.width;
+        parentHeight = imbin.height;
+        parentWidth = imbin.width;
         
         parentBin = imbin;
         
@@ -424,7 +422,7 @@ class RegionProps
         bboxes = _tupBboxesAndIdx[0];
         coords = _tupBboxesAndIdx[1];
         
-        count = cast(int)bboxes.length;
+        count = bboxes.length;
         
         regions.length = count;
     }
