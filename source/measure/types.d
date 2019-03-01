@@ -133,41 +133,41 @@ struct Mat2D(T)
         data[0..$] = 0;
     }
     
-    T opIndex( size_t i, size_t j)
+    T opIndex( size_t i, size_t j) @nogc
     {
         assert((i < rows) && (j < cols), "index out of bounds!");
         return data[i * cols + j];
     }
     
-    void opIndexAssign(T val, size_t i, size_t j)
+    void opIndexAssign(T val, size_t i, size_t j) @nogc
     {
         assert((i < rows) && (j < cols), "index out of bounds!");
         data[i * cols + j] = val;
     }
     
-    bool opEquals(Mat2D!T other)
+    bool opEquals(Mat2D!T other) @nogc
     {
         return data == other.data;
     }
     
-    T max()
+    T max() @nogc
     {
         return data.maxElement;
     }
     
-    T min()
+    T min() @nogc
     {
         return data.minElement;
     }
     
-    int[2] argMax()
+    int[2] argMax() @nogc
     {
         size_t flatInd = maxIndex(data);
         int yy = cast(int)(flatInd % cols);
         int xx = cast(int)(flatInd / cols);
         return [xx, yy];
     }
-    int[2] argMin()
+    int[2] argMin() @nogc
     {
         size_t flatInd = minIndex(data);
         int yy = cast(int)(flatInd % cols);
@@ -235,7 +235,8 @@ struct Mat2D(T)
         return d;
     }
     
-    T[] diag(){
+    T[] diag()
+    {
         assert(rows == cols, "The matrix is not square! Diagonal cannot be created!");
         
         T[] d; d.length = cols;
@@ -313,7 +314,7 @@ struct ROIViewOfMat2D(T)
 }
 +/
 
-void getCofactor(T)(Mat2D!T A, Mat2D!double temp, int p, int q, ulong n) { 
+void getCofactor(T)(Mat2D!T A, Mat2D!double temp, int p, int q, ulong n) @nogc { 
     int i = 0, j = 0; 
   
     for (int row = 0; row < n; row++) 
@@ -334,7 +335,7 @@ void getCofactor(T)(Mat2D!T A, Mat2D!double temp, int p, int q, ulong n) {
     } 
 } 
 
-double determinant(T)(Mat2D!T A, ulong n) 
+double determinant(T)(Mat2D!T A, ulong n)
 { 
     size_t N = A.rows;
     double D = 0;

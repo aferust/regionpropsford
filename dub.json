@@ -5,7 +5,7 @@
 	],
 	"copyright": "Copyright © 2019, Ferhat Kurtulmuş",
 	"license": "Boost",
-	"name": "regionpropsforD",
+	"name": "regionpropsford",
     "version": "0.0.1",
     "importPaths": ["source"],
     "sourcePaths": ["source"],
@@ -18,8 +18,8 @@
         {
             "name": "import",
             "targetType": "sourceLibrary",
-            "sourceFiles-posix": ["libregionpropsforD.a"],
-            "sourceFiles-windows": ["regionpropsforD.lib"]
+            "sourceFiles-posix": ["libregionpropsford.a"],
+            "sourceFiles-windows": ["regionpropsford.lib"]
         }
     ]
 }

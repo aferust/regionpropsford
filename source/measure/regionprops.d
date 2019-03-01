@@ -49,7 +49,7 @@ immutable int[4] dy4 = [0, 1,  0, -1];
 immutable int[8] dx8 = [1, -1, 1, 0, -1,  1,  0, -1];
 immutable int[8] dy8 = [0,  0, 1, 1,  1, -1, -1, -1];
 
-private void dfs4(size_t x, size_t y, ubyte current_label, ubyte[] label, Mat2D!ubyte img) 
+private void dfs4(size_t x, size_t y, ubyte current_label, ubyte[] label, Mat2D!ubyte img) @nogc
 {
     if (x < 0 || x == row_count) return;
     if (y < 0 || y == col_count) return;
@@ -61,7 +61,7 @@ private void dfs4(size_t x, size_t y, ubyte current_label, ubyte[] label, Mat2D!
         dfs4(x + dx4[direction], y + dy4[direction], current_label, label, img);
 }
 
-private void dfs8(size_t x, size_t y, ubyte current_label, ubyte[] label, Mat2D!ubyte img) 
+private void dfs8(size_t x, size_t y, ubyte current_label, ubyte[] label, Mat2D!ubyte img) @nogc
 {
     if (x < 0 || x == row_count) return;
     if (y < 0 || y == col_count) return;
@@ -134,7 +134,7 @@ Mat2D!ubyte coords2mat(XYList xylist, Rectangle rect)
     return im;   
 }
 
-private void _setValAtIdx_with_padding(Mat2D!ubyte img, XYList xylist, int val, int pad = 2)
+private void _setValAtIdx_with_padding(Mat2D!ubyte img, XYList xylist, int val, int pad = 2)@nogc
 {
     foreach (i; 0..xylist.xs.length)
         img[xylist.ys[i]+pad/2, xylist.xs[i]+pad/2] = cast(ubyte)val;
@@ -262,7 +262,7 @@ getContinousBoundaryPoints( Mat2D!ubyte unpadded)
     return xys;
 }
 
-double contourArea(XYList xylist)
+double contourArea(XYList xylist) @nogc
 {
     auto npoints = xylist.xs.length;
     auto xx = xylist.xs;
@@ -279,7 +279,7 @@ double contourArea(XYList xylist)
     return area;
 }
 
-double arcLength(XYList xylist)
+double arcLength(XYList xylist) @nogc
 {
     double perimeter = 0.0, xDiff = 0.0, yDiff = 0.0;
     for( auto k = 0; k < xylist.xs.length-1; k++ ) {
@@ -294,7 +294,7 @@ double arcLength(XYList xylist)
     return perimeter;
 }
 
-Rectangle boundingBox(XYList xylist)
+Rectangle boundingBox(XYList xylist) @nogc
 {
     int minx = xylist.xs.minElement;
     int miny = xylist.ys.minElement;
@@ -363,13 +363,13 @@ Mat2D!ubyte subImage(Mat2D!ubyte img, Rectangle ROI)
     return subIm;
 }
 
-private void setValAtIdx(T)(Mat2D!T img, XYList xylist, T val)
+private void setValAtIdx(T)(Mat2D!T img, XYList xylist, T val) @nogc
 {
     foreach (i; 0..xylist.xs.length)
         img[xylist.ys[i], xylist.xs[i]] = val;
 }
 
-void addXYOffset(ref XYList xylist, int xOffset, int yOffset)
+void addXYOffset(ref XYList xylist, int xOffset, int yOffset) @nogc
 {
     auto npoints = xylist.xs.length;
     foreach(i; 0..npoints)

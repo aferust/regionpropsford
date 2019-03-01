@@ -50,7 +50,7 @@ XYList convexHull(XYList _p) {
 }
  
 /* ccw returns true if the three points make a counter-clockwise turn */
-auto ccw(Point a, Point b, Point c) {
+auto ccw(Point a, Point b, Point c) @nogc {
     return ((b.x - a.x) * (c.y - a.y)) > ((b.y - a.y) * (c.x - a.x));
 }
 

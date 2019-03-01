@@ -86,7 +86,7 @@ Mat2D!double covNx2(U)(U[] xs, U[] ys)
     }
     
     auto rescov = _cov.transpose() * _cov;
-    double[] d; d.length = 2; d[0..$] = 1.0/12;
+    double[2] d; d[0..$] = 1.0/12;
     
     auto covv = Mat2D!double.diagFromArray(d);
     

@@ -64,7 +64,7 @@ class Eig{
 
    // Symmetric Householder reduction to tridiagonal form.
 
-   private void tred2 () {
+   private void tred2 () @nogc{
 
    //  This is derived from the Algol procedures tred2 by
    //  Bowdler, Martin, Reinsch, and Wilkinson, Handbook for
@@ -181,7 +181,7 @@ class Eig{
 
    // Symmetric tridiagonal QL algorithm.
    
-   private void tql2 () {
+   private void tql2 () @nogc{
 
    //  This is derived from the Algol procedures tql2, by
    //  Bowdler, Martin, Reinsch, and Wilkinson, Handbook for
@@ -301,7 +301,7 @@ class Eig{
 
    // Nonsymmetric reduction to Hessenberg form.
 
-   private void orthes () {
+   private void orthes () @nogc {
    
       //  This is derived from the Algol procedures orthes and ortran,
       //  by Martin and Wilkinson, Handbook for Auto. Comp.,
@@ -396,7 +396,7 @@ class Eig{
    // Complex scalar division.
 
    private double cdivr, cdivi;
-   private void cdiv(double xr, double xi, double yr, double yi) {
+   private void cdiv(double xr, double xi, double yr, double yi) @nogc {
       double r,d;
       if (abs(yr) > abs(yi)) {
          r = yi/yr;
@@ -414,7 +414,7 @@ class Eig{
 
    // Nonsymmetric reduction from Hessenberg to real Schur form.
 
-   private void hqr2 () {
+   private void hqr2 () @nogc {
    
       //  This is derived from the Algol procedure hqr2,
       //  by Martin and Wilkinson, Handbook for Auto. Comp.,
@@ -916,7 +916,7 @@ class Eig{
    @return     V
    */
 
-   public Mat2D!double getV () {
+   public Mat2D!double getV () @nogc{
       return V;
    }
 
@@ -924,7 +924,7 @@ class Eig{
    @return     real(diag(D))
    */
 
-   public double[] getRealEigenvalues () {
+   public double[] getRealEigenvalues () @nogc{
       return d;
    }
 
@@ -932,7 +932,7 @@ class Eig{
    @return     imag(diag(D))
    */
 
-   public double[] getImagEigenvalues () {
+   public double[] getImagEigenvalues () @nogc{
       return e;
    }
 
