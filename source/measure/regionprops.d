@@ -140,7 +140,6 @@ private void _setValAtIdx_with_padding(Mat2D!ubyte img, XYList xylist, int val, 
         img[xylist.ys[i]+pad/2, xylist.xs[i]+pad/2] = cast(ubyte)val;
 }
 
-
 XYList
 getContinousBoundaryPoints( Mat2D!ubyte unpadded)
 {
@@ -462,7 +461,8 @@ class RegionProps
             
             region.equivalentDiameter = sqrt(4*region.area/PI);
             
-            region.ellipse = ellipseFit(region.pixelList);
+            //region.ellipse = ellipseFit(region.pixelList);
+            region.ellipse = ellipseFit2(region);
             
             region.orientation = region.ellipse.angle;
             

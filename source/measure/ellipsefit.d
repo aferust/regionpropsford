@@ -34,7 +34,7 @@ import measure.types;
 import measure.regionprops;
 import measure.eigen;
 
-Ellipse ellipseFit(XYList xylist)
+Ellipse ellipseFit(XYList xylist) // gives exact results with matlab
 {
     double meanX = xylist.xs.mean;
     double meanY = xylist.ys.mean;
@@ -97,4 +97,41 @@ Mat2D!double covNx2(U)(U[] xs, U[] ys)
             rescov[i, j] = rescov[i, j] + covv[i, j];
         }
     return rescov;
+}
+
+Ellipse ellipseFit2(Region rg) // gives exact results with matlab and 1 ms faster :)
+{
+    double center_x = rg.m10/rg.m00;
+    double center_y = rg.m01/rg.m00;
+    
+    // central moments
+    double a = rg.m20/rg.m00 - center_x^^2 + 1.0/12;
+    double b = 2*(rg.m11/rg.m00 - center_x*center_y);
+    double c = rg.m02/rg.m00 - center_y^^2 + 1.0/12;
+    
+    double theta = 0.5*atan(b/(a-c)) + (a<c)*PI/2;
+    
+    double axis1 = sqrt(8*(a+c-sqrt(b^^2+(a-c)^^2)))/2;
+    double axis2 = sqrt(8*(a+c+sqrt(b^^2+(a-c)^^2)))/2;
+    
+    double d = sqrt(axis2^^2-axis1^^2);
+    double x1 = center_x + d*cos(theta);
+    double y1 = center_y + d*sin(theta);
+    double x2 = center_x - d*cos(theta);
+    double y2 = center_y - d*sin(theta);
+    
+    XYList xylist = rg.pixelList;
+    auto npoints = xylist.xs.length;
+
+    double orientation;
+    if (axis1 == axis2)
+        orientation = 0;
+    else
+    {
+        orientation = -(180/PI) * theta;
+        if (abs(orientation) > 90)
+            orientation = 180 - abs(orientation);
+    }
+        
+    return Ellipse(orientation, rg.bBox.x + center_x + 1, rg.bBox.y + center_y + 1, 2*axis2, 2*axis1);
 }
