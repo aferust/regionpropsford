@@ -29,30 +29,10 @@ import std.typecons;
 
 import measure.types;
 
-Tuple!(ulong[], ulong[]) grid(uint rows, uint cols){
-    ulong[] xGrid; xGrid.length = cols * rows;
-    xGrid[0..$] = 0;
-    foreach(i; 0..rows)
-        foreach(j; 0..cols){
-            xGrid[i*cols + j] = i;
-        }
-    
-    ulong[] yGrid; yGrid.length = cols * rows;
-    yGrid[0..$] = 0;
-    foreach(i; 0..rows)
-        foreach(j; 0..cols){
-            yGrid[i*cols + j] = j;
-        }
-    return tuple(xGrid, yGrid);
-}
-
 void calculateMoments(Region region){
     auto imbin = region.image;
     
     XYList xylist = region.pixelList;
-    auto mgrid = grid(cast(uint)imbin.height, cast(uint)imbin.width);
-    auto xGrid = mgrid[0];
-    auto yGrid = mgrid[1];
     
     double m00 = 0, m10 = 0, m01 = 0, m20 = 0, m11 = 0, m02 = 0, m30 = 0, m21 = 0, m12 = 0, m03 = 0;
     
@@ -60,16 +40,23 @@ void calculateMoments(Region region){
     
     m00 = xylist.xs.length;
     
+    ulong yGrid;
+    ulong xGrid;
+    
     foreach(i; 0..imbin.height * imbin.width){
-        m01 += xGrid[i]*(imbin.data[i]/255);
-        m10 += yGrid[i]*(imbin.data[i]/255);
-        m11 += yGrid[i]*xGrid[i]*(imbin.data[i]/255);
-        m02 += (xGrid[i]^^2)*(imbin.data[i]/255);
-        m20 += (yGrid[i]^^2)*(imbin.data[i]/255);
-        m12 += xGrid[i]*(yGrid[i]^^2)*(imbin.data[i]/255);
-        m21 += (xGrid[i]^^2)*yGrid[i]*(imbin.data[i]/255);
-        m03 += (xGrid[i]^^3)*(imbin.data[i]/255);
-        m30 += (yGrid[i]^^3)*(imbin.data[i]/255);
+        
+        yGrid = cast(int)(i % imbin.width);
+        xGrid = cast(int)(i / imbin.width);
+        
+        m01 += xGrid*(imbin.data[i]/255);
+        m10 += yGrid*(imbin.data[i]/255);
+        m11 += yGrid*xGrid*(imbin.data[i]/255);
+        m02 += (xGrid^^2)*(imbin.data[i]/255);
+        m20 += (yGrid^^2)*(imbin.data[i]/255);
+        m12 += xGrid*(yGrid^^2)*(imbin.data[i]/255);
+        m21 += (xGrid^^2)*yGrid*(imbin.data[i]/255);
+        m03 += (xGrid^^3)*(imbin.data[i]/255);
+        m30 += (yGrid^^3)*(imbin.data[i]/255);
     }
     
     region.m00 = m00; region.m10 = m10; region.m01 = m01; region.m20 = m20;
