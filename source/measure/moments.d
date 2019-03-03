@@ -45,8 +45,8 @@ void calculateMoments(Region region){
     
     foreach(i; 0..imbin.height * imbin.width){
         
-        yGrid = cast(int)(i % imbin.width);
-        xGrid = cast(int)(i / imbin.width);
+        yGrid = i % imbin.width;
+        xGrid = i / imbin.width;
         
         m01 += xGrid*(imbin.data[i]/255);
         m10 += yGrid*(imbin.data[i]/255);
