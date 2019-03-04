@@ -18,7 +18,8 @@ Example usage with dlib:
       auto _imgbin = otsuBinarization(img);
 
       auto imgbin = Mat2D!ubyte(_imgbin.data, _imgbin.height, _imgbin.width);
-
+      
+      // input binary pixels must be 0 for background and 255 for regions
       auto rp = new RegionProps(imgbin);
       rp.calculateProps();
       /+
@@ -27,7 +28,7 @@ Example usage with dlib:
       rp.regions[0].majorAxisLength
       rp.regions[3].area
       +/
-      auto res = new Image!(PixelFormat.L8)(_imgbin.width, _imgbin.height);
+      auto res = new Image!(PixelFormat.L8)(col_count, row_count);
       res.data[] = imgbin.data[];
 
       foreach(i, region; rp.regions){ // mark the centroids
