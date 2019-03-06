@@ -131,41 +131,41 @@ struct Mat2D(T)
         data[0..$] = 0;
     }
     
-    T opIndex( size_t i, size_t j) @nogc
+    T opIndex( size_t i, size_t j)
     {
         assert((i < rows) && (j < cols), "index out of bounds!");
         return data[i * cols + j];
     }
     
-    void opIndexAssign(T val, size_t i, size_t j) @nogc
+    void opIndexAssign(T val, size_t i, size_t j)
     {
         assert((i < rows) && (j < cols), "index out of bounds!");
         data[i * cols + j] = val;
     }
     
-    bool opEquals(Mat2D!T other) @nogc
+    bool opEquals(Mat2D!T other)
     {
         return data == other.data;
     }
     
-    T max() @nogc
+    T max()
     {
         return data.maxElement;
     }
     
-    T min() @nogc
+    T min()
     {
         return data.minElement;
     }
     
-    int[2] argMax() @nogc
+    int[2] argMax()
     {
         size_t flatInd = maxIndex(data);
         int yy = cast(int)(flatInd % cols);
         int xx = cast(int)(flatInd / cols);
         return [xx, yy];
     }
-    int[2] argMin() @nogc
+    int[2] argMin()
     {
         size_t flatInd = minIndex(data);
         int yy = cast(int)(flatInd % cols);
@@ -312,7 +312,7 @@ struct ROIViewOfMat2D(T)
 }
 +/
 
-void getCofactor(T)(Mat2D!T A, Mat2D!double temp, int p, int q, ulong n) @nogc { 
+void getCofactor(T)(Mat2D!T A, Mat2D!double temp, int p, int q, ulong n) { 
     int i = 0, j = 0; 
   
     for (int row = 0; row < n; row++) 

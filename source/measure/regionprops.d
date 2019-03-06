@@ -49,7 +49,7 @@ immutable int[4] dy4 = [0, 1,  0, -1];
 immutable int[8] dx8 = [1, -1, 1, 0, -1,  1,  0, -1];
 immutable int[8] dy8 = [0,  0, 1, 1,  1, -1, -1, -1];
 
-private void dfs4(size_t x, size_t y, ubyte current_label, ubyte[] label, Mat2D!ubyte img) @nogc
+private void dfs4(size_t x, size_t y, ubyte current_label, ubyte[] label, Mat2D!ubyte img)
 {
     if (x < 0 || x == row_count) return;
     if (y < 0 || y == col_count) return;
@@ -61,28 +61,31 @@ private void dfs4(size_t x, size_t y, ubyte current_label, ubyte[] label, Mat2D!
         dfs4(x + dx4[direction], y + dy4[direction], current_label, label, img);
 }
 
-private void dfs8(size_t x, size_t y, ubyte current_label, ubyte[] label, Mat2D!ubyte img) @nogc
+private void dfs8(size_t i, size_t j, ubyte current_label, ubyte[] label, Mat2D!ubyte img)
 {
-    if (x < 0 || x == row_count) return;
-    if (y < 0 || y == col_count) return;
-    if (label[x*col_count + y] || !img.data[x*col_count + y]) return;
+    if (i < 0 || i == row_count) return;
+    if (j < 0 || j == col_count) return;
+    if (label[i*col_count + j] || !img.data[i*col_count + j]) return;
     
-    label[x*col_count + y] = current_label;
+    label[i*col_count + j] = current_label;
 
     foreach(direction; 0..8)
-        dfs8(x + dx8[direction], y + dy8[direction], current_label, label, img);
+        dfs8(i + dx8[direction], j + dy8[direction], current_label, label, img);
 }
 
 Mat2D!ubyte bwlabel(Mat2D!ubyte img, uint conn = 8)
 {
     /* The algorithm is based on:
      * https://stackoverflow.com/questions/14465297/connected-component-labelling
+     * 
+     * this needs a high value of max stack size,
+     * so add "dflags": ["-L/STACK:1500000000"] to the dub.json
      */
     
     row_count = img.height;
     col_count = img.width;
     
-    auto label = uninitializedArray!(ubyte[])(row_count*col_count);
+    auto label = new ubyte[row_count*col_count]; //uninitializedArray!(ubyte[])(row_count*col_count);
     auto res = Mat2D!ubyte(row_count, col_count);
     
     DfsFun dfs;
@@ -94,8 +97,11 @@ Mat2D!ubyte bwlabel(Mat2D!ubyte img, uint conn = 8)
     
     ubyte component = 0;
     foreach (i; 0..row_count) 
-        foreach (j; 0..col_count)
+        foreach (j; 0..col_count){
             if (!label[i*col_count + j] && img.data[i*col_count + j]) dfs(i, j, ++component, label, img);
+        }
+        
+            
     
     // the number of blobs is "label.maxElement"
     
@@ -134,7 +140,7 @@ Mat2D!ubyte coords2mat(XYList xylist, Rectangle rect)
     return im;   
 }
 
-private void _setValAtIdx_with_padding(Mat2D!ubyte img, XYList xylist, int val, int pad = 2)@nogc
+private void _setValAtIdx_with_padding(Mat2D!ubyte img, XYList xylist, int val, int pad = 2)
 {
     foreach (i; 0..xylist.xs.length)
         img[xylist.ys[i]+pad/2, xylist.xs[i]+pad/2] = cast(ubyte)val;
@@ -261,7 +267,7 @@ getContinousBoundaryPoints( Mat2D!ubyte unpadded)
     return xys;
 }
 
-double contourArea(XYList xylist) @nogc
+double contourArea(XYList xylist)
 {
     auto npoints = xylist.xs.length;
     auto xx = xylist.xs;
@@ -278,7 +284,7 @@ double contourArea(XYList xylist) @nogc
     return area;
 }
 
-double arcLength(XYList xylist) @nogc
+double arcLength(XYList xylist)
 {
     double perimeter = 0.0, xDiff = 0.0, yDiff = 0.0;
     for( auto k = 0; k < xylist.xs.length-1; k++ ) {
@@ -293,7 +299,7 @@ double arcLength(XYList xylist) @nogc
     return perimeter;
 }
 
-Rectangle boundingBox(XYList xylist) @nogc
+Rectangle boundingBox(XYList xylist)
 {
     int minx = xylist.xs.minElement;
     int miny = xylist.ys.minElement;
@@ -362,13 +368,13 @@ Mat2D!ubyte subImage(Mat2D!ubyte img, Rectangle ROI)
     return subIm;
 }
 
-private void setValAtIdx(T)(Mat2D!T img, XYList xylist, T val) @nogc
+private void setValAtIdx(T)(Mat2D!T img, XYList xylist, T val)
 {
     foreach (i; 0..xylist.xs.length)
         img[xylist.ys[i], xylist.xs[i]] = val;
 }
 
-void addXYOffset(ref XYList xylist, int xOffset, int yOffset) @nogc
+void addXYOffset(ref XYList xylist, int xOffset, int yOffset)
 {
     auto npoints = xylist.xs.length;
     foreach(i; 0..npoints)
@@ -381,6 +387,7 @@ void addXYOffset(ref XYList xylist, int xOffset, int yOffset) @nogc
 import measure.chull;
 import measure.ellipsefit;
 import measure.moments;
+import measure.label2;
 
 class RegionProps
 {
@@ -396,6 +403,7 @@ class RegionProps
         
     }
     */
+    
     Region[] regions;
     Mat2D!ubyte parentBin;
     Mat2D!ubyte labelIm;

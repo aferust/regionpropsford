@@ -21,5 +21,6 @@
             "sourceFiles-posix": ["libregionpropsford.a"],
             "sourceFiles-windows": ["regionpropsford.lib"]
         }
-    ]
+    ],
+    "dflags": ["-L/STACK:1500000000"]
 }
