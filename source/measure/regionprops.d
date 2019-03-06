@@ -33,11 +33,9 @@ import std.algorithm;
 import measure.types;
 import measure.chull;
 
-
-
 private
 {
-    alias DfsFun = void function(size_t, size_t, ubyte, ubyte[], Mat2D!ubyte);
+    alias DfsFun = void function(size_t, size_t, uint, uint[], Mat2D!ubyte);
     size_t row_count;
     size_t col_count;
 }
@@ -49,7 +47,7 @@ immutable int[4] dy4 = [0, 1,  0, -1];
 immutable int[8] dx8 = [1, -1, 1, 0, -1,  1,  0, -1];
 immutable int[8] dy8 = [0,  0, 1, 1,  1, -1, -1, -1];
 
-private void dfs4(size_t x, size_t y, ubyte current_label, ubyte[] label, Mat2D!ubyte img)
+private void dfs4(size_t x, size_t y, uint current_label, uint[] label, Mat2D!ubyte img)
 {
     if (x < 0 || x == row_count) return;
     if (y < 0 || y == col_count) return;
@@ -61,7 +59,7 @@ private void dfs4(size_t x, size_t y, ubyte current_label, ubyte[] label, Mat2D!
         dfs4(x + dx4[direction], y + dy4[direction], current_label, label, img);
 }
 
-private void dfs8(size_t i, size_t j, ubyte current_label, ubyte[] label, Mat2D!ubyte img)
+private void dfs8(size_t i, size_t j, uint current_label, uint[] label, Mat2D!ubyte img)
 {
     if (i < 0 || i == row_count) return;
     if (j < 0 || j == col_count) return;
@@ -73,7 +71,7 @@ private void dfs8(size_t i, size_t j, ubyte current_label, ubyte[] label, Mat2D!
         dfs8(i + dx8[direction], j + dy8[direction], current_label, label, img);
 }
 
-Mat2D!ubyte bwlabel(Mat2D!ubyte img, uint conn = 8)
+Mat2D!uint bwlabel(Mat2D!ubyte img, uint conn = 8)
 {
     /* The algorithm is based on:
      * https://stackoverflow.com/questions/14465297/connected-component-labelling
@@ -85,8 +83,8 @@ Mat2D!ubyte bwlabel(Mat2D!ubyte img, uint conn = 8)
     row_count = img.height;
     col_count = img.width;
     
-    auto label = new ubyte[row_count*col_count]; //uninitializedArray!(ubyte[])(row_count*col_count);
-    auto res = Mat2D!ubyte(row_count, col_count);
+    auto label = new uint[row_count*col_count]; //uninitializedArray!(ubyte[])(row_count*col_count);
+    auto res = Mat2D!uint(row_count, col_count);
     
     DfsFun dfs;
     
@@ -311,7 +309,7 @@ Rectangle boundingBox(XYList xylist)
 }
 
 Tuple!(Rectangle[], XYList[])
-bboxesAndIdxFromLabelImage(Mat2D!ubyte labelIm)
+bboxesAndIdxFromLabelImage(Mat2D!uint labelIm)
 {
     auto rc = labelIm.height;
     auto cc = labelIm.width;
@@ -406,7 +404,7 @@ class RegionProps
     
     Region[] regions;
     Mat2D!ubyte parentBin;
-    Mat2D!ubyte labelIm;
+    Mat2D!uint labelIm;
     
     size_t parentHeight;
     size_t parentWidth;
