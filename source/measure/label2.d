@@ -34,7 +34,7 @@ void unionCoords(int x, int y, int x2, int y2)
         doUnion(cast(uint)(x*h + y), cast(uint)(x2*h + y2));
 }
 
-Mat2D!ubyte bwlabel2(Mat2D!ubyte img)
+Mat2D!uint bwlabel2(Mat2D!ubyte img)
 {
     Rectangle[] bboxes;
     XYList[] coords;
@@ -75,18 +75,20 @@ Mat2D!ubyte bwlabel2(Mat2D!ubyte img)
                 tmp.xs ~= y;
                 tmp.ys ~= x;
                 pmap[c] = tmp;
+            }else{
+                pmap[c].xs ~= y;
+                pmap[c].ys ~= x;
             }
 
-            pmap[c].xs ~= y;
-            pmap[c].ys ~= x;
+            
         }
     }
-    auto res = Mat2D!ubyte(w, h);
+    auto res = Mat2D!uint(w, h);
     foreach(lbl, key; pmap.keys)
     {
         XYList points = pmap[key];
         foreach(i; 0..points.xs.length)
-            res[points.ys[i], points.xs[i]] = cast(ubyte)(lbl + 1);
+            res[points.ys[i], points.xs[i]] = cast(uint)(lbl + 1);
         
     }
     

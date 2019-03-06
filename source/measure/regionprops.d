@@ -38,6 +38,7 @@ private
     alias DfsFun = void function(size_t, size_t, uint, uint[], Mat2D!ubyte);
     size_t row_count;
     size_t col_count;
+    XYList[uint] pmap;
 }
 
 
@@ -47,16 +48,28 @@ immutable int[4] dy4 = [0, 1,  0, -1];
 immutable int[8] dx8 = [1, -1, 1, 0, -1,  1,  0, -1];
 immutable int[8] dy8 = [0,  0, 1, 1,  1, -1, -1, -1];
 
-private void dfs4(size_t x, size_t y, uint current_label, uint[] label, Mat2D!ubyte img)
+private void dfs4(size_t i, size_t j, uint current_label, uint[] label, Mat2D!ubyte img)
 {
-    if (x < 0 || x == row_count) return;
-    if (y < 0 || y == col_count) return;
-    if (label[x*col_count + y] || !img.data[x*col_count + y]) return;
+    if (i < 0 || i == row_count) return;
+    if (j < 0 || j == col_count) return;
+    if (label[i*col_count + j] || !img.data[i*col_count + j]) return;
     
-    label[x*col_count + y] = current_label;
+    label[i*col_count + j] = current_label;
+    
+    if(current_label !in pmap)
+    {
+        XYList tmp;
+        tmp.xs ~= cast(uint)j;
+        tmp.ys ~= cast(uint)i;
+        pmap[current_label] = tmp;
+    }else{
+        pmap[current_label].xs ~= cast(uint)j;
+        pmap[current_label].ys ~= cast(uint)i;
+    }
+    
     
     foreach(direction; 0..4)
-        dfs4(x + dx4[direction], y + dy4[direction], current_label, label, img);
+        dfs4(i + dx4[direction], j + dy4[direction], current_label, label, img);
 }
 
 private void dfs8(size_t i, size_t j, uint current_label, uint[] label, Mat2D!ubyte img)
@@ -66,7 +79,17 @@ private void dfs8(size_t i, size_t j, uint current_label, uint[] label, Mat2D!ub
     if (label[i*col_count + j] || !img.data[i*col_count + j]) return;
     
     label[i*col_count + j] = current_label;
-
+    if(current_label !in pmap)
+    {
+        XYList tmp;
+        tmp.xs ~= cast(uint)j;
+        tmp.ys ~= cast(uint)i;
+        pmap[current_label] = tmp;
+    }else{
+        pmap[current_label].xs ~= cast(uint)j;
+        pmap[current_label].ys ~= cast(uint)i;
+    }
+    
     foreach(direction; 0..8)
         dfs8(i + dx8[direction], j + dy8[direction], current_label, label, img);
 }
@@ -79,7 +102,7 @@ Mat2D!uint bwlabel(Mat2D!ubyte img, uint conn = 8)
      * this needs a high value of max stack size,
      * so add "dflags": ["-L/STACK:1500000000"] to the dub.json
      */
-    
+    pmap = null;
     row_count = img.height;
     col_count = img.width;
     
@@ -96,7 +119,8 @@ Mat2D!uint bwlabel(Mat2D!ubyte img, uint conn = 8)
     ubyte component = 0;
     foreach (i; 0..row_count) 
         foreach (j; 0..col_count){
-            if (!label[i*col_count + j] && img.data[i*col_count + j]) dfs(i, j, ++component, label, img);
+            if (!label[i*col_count + j] && img.data[i*col_count + j]) 
+                dfs(i, j, ++component, label, img);
         }
         
             
@@ -423,9 +447,16 @@ class RegionProps
         
         labelIm = bwlabel(parentBin);
         
-        auto _tupBboxesAndIdx = bboxesAndIdxFromLabelImage(labelIm);
+        
+        foreach(i; 0..pmap.keys.length)
+        {
+            bboxes ~= boundingBox(pmap[cast(uint)(i+1)]);
+            coords ~= pmap[cast(uint)(i+1)];
+        }
+        
+        /*auto _tupBboxesAndIdx = bboxesAndIdxFromLabelImage(labelIm);
         bboxes = _tupBboxesAndIdx[0];
-        coords = _tupBboxesAndIdx[1];
+        coords = _tupBboxesAndIdx[1];*/
         
         count = bboxes.length;
         
