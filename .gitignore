@@ -12,3 +12,5 @@ docs/
 *.obj
 *.lst
 *.geany
+source/python/build
+source/python/rprops_.c
