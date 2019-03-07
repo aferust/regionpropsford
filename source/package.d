@@ -36,4 +36,5 @@ public
     import measure.eigen;
     import measure.ellipsefit;
     import measure.chull;
+    import measure.label2;
 }
