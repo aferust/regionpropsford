@@ -428,7 +428,6 @@ class RegionProps
     
     Region[] regions;
     Mat2D!ubyte parentBin;
-    Mat2D!uint labelIm;
     
     size_t parentHeight;
     size_t parentWidth;
@@ -438,26 +437,29 @@ class RegionProps
     
     size_t count = 0;
     
-    this(Mat2D!ubyte imbin)
+    this(Mat2D!ubyte imbin, bool recursiveLabeling = true)
     {
         parentHeight = imbin.height;
         parentWidth = imbin.width;
         
         parentBin = imbin;
         
-        labelIm = bwlabel(parentBin);
-        
-        
-        foreach(i; 0..pmap.keys.length)
+        if(recursiveLabeling)
         {
-            bboxes ~= boundingBox(pmap[cast(uint)(i+1)]);
-            coords ~= pmap[cast(uint)(i+1)];
+            Mat2D!uint labelIm;
+            labelIm = bwlabel(parentBin);
+            foreach(i; 0..pmap.keys.length)
+            {
+                bboxes ~= boundingBox(pmap[cast(uint)(i+1)]);
+                coords ~= pmap[cast(uint)(i+1)];
+            }
+        }else
+        {
+            coords = bwlabel2(parentBin);
+            foreach(coord; coords)
+                bboxes ~= boundingBox(coord);
         }
-        
-        /*auto _tupBboxesAndIdx = bboxesAndIdxFromLabelImage(labelIm);
-        bboxes = _tupBboxesAndIdx[0];
-        coords = _tupBboxesAndIdx[1];*/
-        
+
         count = bboxes.length;
         
         regions.length = count;
@@ -484,7 +486,6 @@ class RegionProps
             region.areaFromContour = contourArea(contourIdx_sorted); // holes are ignored
             region.area = coords[i].xs.length;
             region.pixelList = coords[i];
-            
             
             region.contourPixelList = contourIdx_sorted;
             

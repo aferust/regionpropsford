@@ -1,7 +1,7 @@
 # regionpropsford
 Regionprops implementation for dlang
 
-The library does not have any dependency except dlang standard library. In theory, the library can be used with any image processing library allowing access to raw image data pointer. Although it has been tested with dlib, you can test it with other libraries such as dcv. Look at source/types.d -> Region class for supported binary region properties. Pull requests are welcomed for improvements!
+The library does not have any dependency except dlang standard library. In theory, the library can be used with any image processing library allowing access to raw image data pointer. Although it has been tested with dlib, you can test it with other libraries such as dcv. Pull requests are welcomed for improvements!
 
 Example usage with dlib:
 ```
@@ -20,6 +20,11 @@ Example usage with dlib:
       auto imgbin = Mat2D!ubyte(_imgbin.data, _imgbin.height, _imgbin.width);
       
       // input binary pixels must be 0 for background and 255 for regions
+      /* 
+      try RegionProps(imgbin, false) if your OS complains about max
+      stack size limit. In this way labeling will be done using
+      a non-recursive method.
+      */
       auto rp = new RegionProps(imgbin);
       rp.calculateProps();
       /+
@@ -37,3 +42,26 @@ Example usage with dlib:
       saveImage(res, "result.png");
   }
   ```
+# Currently supported properties:
+    
+    spatial raw moments:
+    double m00, m10, m01, m20, m11, m02, m30, m21, m12, m03;
+    
+    ulong area;
+    double areaFromContour;
+    double perimeter;
+    Point centroid;
+    double aspect_Ratio;
+    Rectangle bBox; // bounding box
+    XYList convexHull;
+    double convexArea;
+    Ellipse ellipse;
+    double extent;
+    double solidity;
+    double majorAxisLength;
+    double minorAxisLength;
+    double orientation;
+    double eccentricity;
+    double equivalentDiameter;
+    XYList contourPixelList; // chain sorted!
+    XYList pixelList;

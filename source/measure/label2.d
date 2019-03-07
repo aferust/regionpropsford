@@ -9,17 +9,16 @@ import std.typecons;
 
 /* The algorithm is based on:
  * https://stackoverflow.com/questions/14465297/connected-component-labelling
- * 
- * this is not as efficient as bwlabel with its current implementation
  */
+private
+{
+    alias UnionFun4Conn = void function(int x, int y);
+    Mat2D!ubyte input;
+    size_t w, h;
+    uint[] component;
+}
 
-Mat2D!ubyte input;
-
-size_t w, h;
-
-uint[] component;
-
-void doUnion(uint a, uint b)
+private void doUnion(uint a, uint b)
 {
     while (component[a] != a)
         a = component[a];
@@ -28,15 +27,28 @@ void doUnion(uint a, uint b)
     component[b] = a;
 }
 
-void unionCoords(int x, int y, int x2, int y2)
+private void unionCoords(int x, int y, int x2, int y2)
 {
     if (y2 < h && x2 < w && input[x, y] && input[x2, y2])
         doUnion(cast(uint)(x*h + y), cast(uint)(x2*h + y2));
 }
 
-Mat2D!uint bwlabel2(Mat2D!ubyte img)
+private void conn8Fun(int x, int y)
 {
-    Rectangle[] bboxes;
+    unionCoords(x, y, x+1, y);
+    unionCoords(x, y, x, y+1);
+    unionCoords(x, y, x+1, y+1);
+}
+
+private void conn4Fun(int x, int y)
+{
+    unionCoords(x, y, x+1, y);
+    unionCoords(x, y, x, y+1);
+}
+
+XYList[] bwlabel2(Mat2D!ubyte img, bool conn8 = true)
+{
+    // gives coordinates of connected components
     XYList[] coords;
     
     input = img;
@@ -46,16 +58,18 @@ Mat2D!uint bwlabel2(Mat2D!ubyte img)
     
     component = new uint[w*h];
     
+    UnionFun4Conn uFun;
+    if(conn8)
+        uFun = &conn8Fun;
+    else
+        uFun = &conn4Fun;
+    
     for (int i = 0; i < w*h; i++)
         component[i] = i;
     for (int x = 0; x < w; x++)
     for (int y = 0; y < h; y++)
-    {
-        unionCoords(x, y, x+1, y);
-        unionCoords(x, y, x, y+1);
-        unionCoords(x, y, x+1, y+1);
-        
-    }
+        uFun(x, y);
+    
     XYList[uint] pmap;
     
     for (int x = 0; x < w; x++)
@@ -83,14 +97,11 @@ Mat2D!uint bwlabel2(Mat2D!ubyte img)
             
         }
     }
-    auto res = Mat2D!uint(w, h);
-    foreach(lbl, key; pmap.keys)
+    
+    foreach(key; pmap.keys)
     {
-        XYList points = pmap[key];
-        foreach(i; 0..points.xs.length)
-            res[points.ys[i], points.xs[i]] = cast(uint)(lbl + 1);
-        
+        coords ~= pmap[key];
     }
     
-    return res;
+    return coords;
 }
