@@ -1,11 +1,17 @@
 
-extern int rt_init();
-extern int rt_term();
-extern void _rprops(unsigned char* _data, unsigned int rows, unsigned int cols);
+extern void _rprops(unsigned char* _data, unsigned int rows, unsigned int cols, unsigned long *n);
 
-void crprops(unsigned char* arrayPtr, unsigned int rows, unsigned int cols)
-{
+void initRprops(){
     rt_init();
-    _rprops(arrayPtr, rows, cols);
+}
+
+void crprops(unsigned char* arrayPtr, unsigned int rows, unsigned int cols, unsigned long *n)
+{
+    
+    _rprops(arrayPtr, rows, cols, n);
+
+}
+
+void deinitRprops(){
     rt_term();
 }
