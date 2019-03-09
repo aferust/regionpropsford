@@ -6,7 +6,8 @@ import numpy
 
 """
 set below paths and lib names and run:
-python setup.py build_ext --inplace to build a shared python lib
+    python setup.py build_ext --inplace
+to build a shared python lib
 """
 phobos_lib_dir = "D:/msys64/home/user/dlang/ldc2-d4858cfb-windows-x64/lib"
 phobos_lib = "phobos2-ldc"
