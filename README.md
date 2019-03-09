@@ -65,3 +65,6 @@ Example usage with dlib:
     double equivalentDiameter;
     XYList contourPixelList; // chain sorted!
     XYList pixelList;
+
+# Python binding
+Please refer to source/python/setup.py to build and use it with opencv
