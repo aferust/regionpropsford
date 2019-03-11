@@ -23,7 +23,7 @@ DEALINGS IN THE SOFTWARE.
 */
 
 /* 
-C Interface. Created for python binding, but I think it can also be used
+C Interface. Created for the python binding, but I think it can also be used
 to create bindings to other languages.
 */
 module rpcinterface;

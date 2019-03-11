@@ -332,32 +332,6 @@ Rectangle boundingBox(XYList xylist)
     return rect;
 }
 
-Tuple!(Rectangle[], XYList[])
-bboxesAndIdxFromLabelImage(Mat2D!uint labelIm)
-{
-    auto rc = labelIm.height;
-    auto cc = labelIm.width;
-    
-    immutable int ncomps = labelIm.data.maxElement;
-    
-    XYList[] segmentedImgIdx;
-    segmentedImgIdx.length = ncomps;
-    
-    foreach (i; 0..rc) 
-        foreach (j; 0..cc)
-            foreach(label; 0..ncomps){
-                if(labelIm.data[i*cc + j] == label+1){
-                    segmentedImgIdx[label].xs ~= cast(uint)j;
-                    segmentedImgIdx[label].ys ~= cast(uint)i;
-                }
-            }
-    Rectangle[] rects; rects.length = ncomps;
-    foreach(i; 0..ncomps)
-        rects[i] = boundingBox(segmentedImgIdx[i]);
-    
-    return tuple(rects, segmentedImgIdx);
-}
-
 Mat2D!ubyte idxListToSubImage(Rectangle rect, XYList idxlist)
 {
     
@@ -375,7 +349,6 @@ Mat2D!ubyte idxListToSubImage(Rectangle rect, XYList idxlist)
 
 Mat2D!ubyte subImage(Mat2D!ubyte img, Rectangle ROI)
 {
-    //this copies vals for new image :(
     auto cc =img.width;
     auto subIm = Mat2D!ubyte(ROI.height, ROI.width);
     ubyte* ptr = subIm.data.ptr;
@@ -388,12 +361,6 @@ Mat2D!ubyte subImage(Mat2D!ubyte img, Rectangle ROI)
         }
     
     return subIm;
-}
-
-private void setValAtIdx(T)(Mat2D!T img, XYList xylist, T val)
-{
-    foreach (i; 0..xylist.xs.length)
-        img[xylist.ys[i], xylist.xs[i]] = val;
 }
 
 void addXYOffset(ref XYList xylist, int xOffset, int yOffset)
@@ -413,19 +380,6 @@ import measure.label2;
 
 class RegionProps
 {
-    /* test it like:
-    auto img = loadImage("test.png");
-    auto imgbin = otsuBinarization(img);
-    
-    auto rp = new RegionProps(imgbin);
-    rp.calculateProps();
-    
-    foreach(i, region; rp.regions){
-        imgbin[region.centroid.x, region.centroid.y] = Color4f(0, 0, 0, 255);
-        
-    }
-    */
-    
     Region[] regions;
     Mat2D!ubyte parentBin;
     

@@ -1,7 +1,7 @@
 # regionpropsford
 Regionprops implementation for dlang
 
-The library does not have any dependency except dlang standard library. In theory, the library can be used with any image processing library allowing access to raw image data pointer. Although it has been tested with dlib, you can test it with other libraries such as dcv. Pull requests are welcomed for improvements!
+The library does not have any dependency except dlang standard library phobos. In theory, the library can be used with any image processing library allowing access to raw image data pointer. Although it has been tested with dlib, you can test it with other libraries such as dcv. Pull requests are welcome for improvements!
 
 Example usage with dlib:
 ```
