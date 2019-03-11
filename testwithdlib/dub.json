@@ -1,0 +1,13 @@
+{
+	"description": "A minimal D application.",
+    "dependencies": {
+        "dlib": "~>0.15.0",
+        "regionpropsford": "~>0.0.1"
+	},
+	"authors": [
+		"Ferhat Kurtulmuş"
+	],
+	"copyright": "Copyright © 2019, Ferhat Kurtulmuş",
+	"license": "Boost",
+	"name": "testwithdlib"
+}
