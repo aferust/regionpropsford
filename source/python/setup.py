@@ -5,7 +5,11 @@ from Cython.Distutils import build_ext
 import numpy
 
 """
-set below paths and lib names and run:
+The python binding is based on cython. I know that there is pyd out there.
+But I thought it was not mature enough, and decided to do it using cython.
+
+First, build the library using dub, then set the path and the name of 
+d's standard library and run:
     python setup.py build_ext --inplace
 to build a shared python lib
 """
