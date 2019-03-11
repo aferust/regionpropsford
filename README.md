@@ -1,7 +1,7 @@
 # regionpropsford
 Regionprops implementation for dlang
 
-The library does not have any dependency except dlang standard library phobos. In theory, the library can be used with any image processing library allowing access to raw image data pointer. Although it has been tested with dlib, you can test it with other libraries such as dcv. Pull requests are welcome for improvements!
+Region Properties, AKA regionprops is a famous routine for calculating region (blob) properties/statistics in image processing/computer vision. The library does not have any dependency except dlang standard library phobos. In theory, the library can be used with any image processing library allowing access to raw image data pointer. Although it has been tested with dlib, you can test it with other libraries such as dcv. Pull requests are welcome for improvements!
 
 Example usage with dlib:
 ```
@@ -67,4 +67,52 @@ Example usage with dlib:
     XYList pixelList;
 
 # Python binding
-Please refer to source/python/setup.py to build and use it with opencv
+The python binding is based on cython. I know that there is pyd out there.
+But I thought it was not mature enough, and decided to do it using cython.
+
+First, build the library using dub, then set the path and the name of 
+d's standard library in source/python/setup.py and run:
+    python setup.py build_ext --inplace
+to build a shared python lib
+
+usage with opencv:
+```
+    import numpy as np
+    import cv2
+    import rprops
+
+    imrgb = cv2.imread('test.png');
+    img_gray = cv2.cvtColor(imrgb, cv2.COLOR_BGR2GRAY)
+
+    binary = img_gray > 200 # do your thresholding somehow
+
+    # returns a list containing dicts:
+    regions = rprops.regionpropsford(binary.astype(np.uint8)) 
+
+    print(regions[0]["Perimeter"])
+```
+# An example result of the module (images from spyder)
+![Alt text](/source/python/doc_images/regions.png?raw=true "regions")
+![Alt text](/source/python/doc_images/aregion.png?raw=true "A region with properties")
+
+# Avalable properties (keys of dictionary obj representing a region):
+
+Perimeter
+AreaFromContour
+Orientation
+ConvexHull
+Area
+Moments
+MinorAxis
+Solidity
+ConvexArea
+Eccentricity
+ContourPixelList
+Centroid
+MajorAxis
+PixelList
+BoundingBox
+AspectRatio
+EquivalentDiameter
+Ellipse
+
