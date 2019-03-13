@@ -160,14 +160,14 @@ struct Mat2D(T)
     
     int[2] argMax()
     {
-        size_t flatInd = maxIndex(data);
+        const size_t flatInd = maxIndex(data);
         int yy = cast(int)(flatInd % cols);
         int xx = cast(int)(flatInd / cols);
         return [xx, yy];
     }
     int[2] argMin()
     {
-        size_t flatInd = minIndex(data);
+        const size_t flatInd = minIndex(data);
         int yy = cast(int)(flatInd % cols);
         int xx = cast(int)(flatInd / cols);
         return [xx, yy];
@@ -175,11 +175,11 @@ struct Mat2D(T)
     
     Mat2D!T opMul(S)(Mat2D!S b)
     {
-        size_t r1 = rows;
-        size_t c1 = cols;
-        
-        size_t r2 = b.rows;
-        size_t c2 = b.cols;
+        const size_t r1 = rows;
+        const size_t c1 = cols;
+
+        const size_t r2 = b.rows;
+        const size_t c2 = b.cols;
         
         assert ((c1 == r2), "column of first matrix in not equal to row of second matrix"); 
         
@@ -265,8 +265,8 @@ struct Mat2D(T)
         
         size_t N = rows;
         Mat2D!double inv = Mat2D!double(rows, rows);
-         
-        double det = determinant(this, N); 
+
+        const double det = determinant(this, N);
         assert (det != 0); //  Singular matrix, can't find its inverse
       
         // Find adjoint 

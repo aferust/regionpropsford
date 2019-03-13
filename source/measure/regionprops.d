@@ -133,8 +133,8 @@ Mat2D!uint bwlabel(Mat2D!ubyte img, uint conn = 8)
 
 XYList bin2coords(Mat2D!ubyte img)
 {
-    size_t rc = img.height;
-    size_t cc = img.width;
+    immutable size_t rc = img.height;
+    immutable size_t cc = img.width;
     
     XYList coords;
     
@@ -153,7 +153,7 @@ Mat2D!ubyte coords2mat(XYList xylist, Rectangle rect)
 {
     auto im = Mat2D!ubyte(rect.height, rect.width);
     
-    auto n = xylist.xs.length;
+    immutable auto n = xylist.xs.length;
     
     foreach(i; 0..n)
     {
@@ -190,7 +190,7 @@ getContinousBoundaryPoints( Mat2D!ubyte unpadded)
     {
         
         
-        int nImageSize = Width_i * Height_i;
+        immutable int nImageSize = Width_i * Height_i;
         
         int[][] Offset = [
                             [ -1, -1 ],
@@ -248,10 +248,10 @@ getContinousBoundaryPoints( Mat2D!ubyte unpadded)
             int Loop = 0;
             while( Loop < ( NEIGHBOR_COUNT - 1 ) && CurrentBackTrackedPixelOffsetInd != -1 )
             {
-                int OffsetIndex = ( CurrentBackTrackedPixelOffsetInd + 1 ) % NEIGHBOR_COUNT;
+                immutable int OffsetIndex = ( CurrentBackTrackedPixelOffsetInd + 1 ) % NEIGHBOR_COUNT;
                 CurrentBoundaryCheckingPixelCord.x = BoundaryPixelCord.x + Offset[OffsetIndex][0];
                 CurrentBoundaryCheckingPixelCord.y = BoundaryPixelCord.y + Offset[OffsetIndex][1];
-                int ImageIndex = CurrentBoundaryCheckingPixelCord.y * Width_i + 
+                immutable int ImageIndex = CurrentBoundaryCheckingPixelCord.y * Width_i +
                                     CurrentBoundaryCheckingPixelCord.x;
                 
                 if( 0 != InputImage[ImageIndex] )// finding the next boundary pixel
@@ -291,7 +291,7 @@ getContinousBoundaryPoints( Mat2D!ubyte unpadded)
 
 double contourArea(XYList xylist)
 {
-    auto npoints = xylist.xs.length;
+    immutable auto npoints = xylist.xs.length;
     auto xx = xylist.xs;
     auto yy = xylist.ys;
     
@@ -323,10 +323,10 @@ double arcLength(XYList xylist)
 
 Rectangle boundingBox(XYList xylist)
 {
-    int minx = xylist.xs.minElement;
-    int miny = xylist.ys.minElement;
-    int width = xylist.xs.maxElement - xylist.xs.minElement + 1;
-    int height = xylist.ys.maxElement - xylist.ys.minElement + 1;
+    immutable int minx = xylist.xs.minElement;
+    immutable int miny = xylist.ys.minElement;
+    immutable int width = xylist.xs.maxElement - xylist.xs.minElement + 1;
+    immutable int height = xylist.ys.maxElement - xylist.ys.minElement + 1;
     
     Rectangle rect = {x: minx, y: miny, width: width, height: height};
     return rect;
@@ -365,7 +365,7 @@ Mat2D!ubyte subImage(Mat2D!ubyte img, Rectangle ROI)
 
 void addXYOffset(ref XYList xylist, int xOffset, int yOffset)
 {
-    auto npoints = xylist.xs.length;
+    immutable auto npoints = xylist.xs.length;
     foreach(i; 0..npoints)
     {
         xylist.xs[i] += xOffset;

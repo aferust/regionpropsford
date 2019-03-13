@@ -37,8 +37,8 @@ import measure.eigen;
 // gives exact results of matlab
 Ellipse ellipseFit(XYList xylist)
 {
-    double meanX = xylist.xs.mean;
-    double meanY = xylist.ys.mean;
+    const double meanX = xylist.xs.mean;
+    const double meanY = xylist.ys.mean;
     
     auto cov = covNx2(xylist.xs, xylist.ys);
 
@@ -48,10 +48,10 @@ Ellipse ellipseFit(XYList xylist)
     
     auto lambda_d = lambda.diag();
     foreach(ref val; lambda_d) val = 4*sqrt(val);
-    
-    double minorAxisLength = minElement(lambda_d);
-    auto minor_idx = minIndex(lambda_d);
-    double majorAxisLength = maxElement(lambda_d);
+
+    const double minorAxisLength = minElement(lambda_d);
+    //const auto minor_idx = minIndex(lambda_d);
+    const double majorAxisLength = maxElement(lambda_d);
     auto major_idx = maxIndex(lambda_d);
     
     
@@ -70,15 +70,15 @@ Ellipse ellipseFit(XYList xylist)
 
 Mat2D!double covNx2(U)(U[] xs, U[] ys)
 {
-    auto npoints = xs.length;
-    auto _npoints = ys.length;
+    const auto npoints = xs.length;
+    const auto _npoints = ys.length;
     
     assert(npoints == _npoints, "array sizes are mismatch!");
     
     auto _cov = Mat2D!double(npoints, 2);
-    
-    double meanX = xs.mean;
-    double meanY = ys.mean;
+
+    const double meanX = xs.mean;
+    const double meanY = ys.mean;
     
     foreach(i; 0..npoints)
     {
@@ -103,18 +103,18 @@ Mat2D!double covNx2(U)(U[] xs, U[] ys)
 // gives exact results of matlab and 1 ms faster :)
 Ellipse ellipseFit2(Region rg) @nogc
 {
-    double center_x = rg.m10/rg.m00;
-    double center_y = rg.m01/rg.m00;
+    const double center_x = rg.m10/rg.m00;
+    const double center_y = rg.m01/rg.m00;
     
     // central moments
-    double a = rg.m20/rg.m00 - center_x^^2 + 1.0/12;
-    double b = 2*(rg.m11/rg.m00 - center_x*center_y);
-    double c = rg.m02/rg.m00 - center_y^^2 + 1.0/12;
-    
-    double theta = 0.5*atan(b/(a-c)) + (a<c)*PI/2;
-    
-    double axis1 = sqrt(8*(a+c-sqrt(b^^2+(a-c)^^2)))/2;
-    double axis2 = sqrt(8*(a+c+sqrt(b^^2+(a-c)^^2)))/2;
+    const double a = rg.m20/rg.m00 - center_x^^2 + 1.0/12;
+    const double b = 2*(rg.m11/rg.m00 - center_x*center_y);
+    const double c = rg.m02/rg.m00 - center_y^^2 + 1.0/12;
+
+    const double theta = 0.5*atan(b/(a-c)) + (a<c)*PI/2;
+
+    const double axis1 = sqrt(8*(a+c-sqrt(b^^2+(a-c)^^2)))/2;
+    const double axis2 = sqrt(8*(a+c+sqrt(b^^2+(a-c)^^2)))/2;
 
     double orientation;
     if (axis1 == axis2)

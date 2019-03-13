@@ -13,7 +13,7 @@ import measure.regionprops;
 */
 
 XYList convexHull(XYList _p) {
-    auto n = _p.xs.length;
+    const auto n = _p.xs.length;
     assert( n >= 3, "Convex hull not possible");
     
     Point[] p; p.length = n; foreach(i; 0..n) p[i] = Point(_p.xs[i], _p.ys[i]);
@@ -29,7 +29,7 @@ XYList convexHull(XYList _p) {
     }
  
     // upper hull
-    auto t = h.length + 1;
+    const auto t = h.length + 1;
     foreach_reverse (i; 0..(p.length - 1)) {
         auto pt = p[i];
         while (h.length >= t && !ccw(h[$-2], h[$-1], pt)) {

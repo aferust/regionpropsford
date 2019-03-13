@@ -31,8 +31,8 @@ import measure.types;
 
 void calculateMoments(Region region){
     auto imbin = region.image;
-    
-    XYList xylist = region.pixelList;
+
+    const XYList xylist = region.pixelList;
     
     double m00 = 0, m10 = 0, m01 = 0, m20 = 0, m11 = 0, m02 = 0, m30 = 0, m21 = 0, m12 = 0, m03 = 0;
     
