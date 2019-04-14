@@ -42,6 +42,41 @@ Example usage with dlib:
       saveImage(res, "result.png");
   }
   ```
+Example usage with [opencvd](https://github.com/aferust/opencvd):
+```
+import std.stdio;
+
+import opencvd.cvcore;
+import opencvd.highgui;
+import opencvd.imgcodecs;
+
+import measure.regionprops;
+import measure.types;
+
+int main()
+{
+    Mat img0 = imread("test.png", 0);
+    
+    ubyte* rawdata = cast(ubyte*)img0.rawDataPtr();
+    ubyte[] data = rawdata[0..img0.rows*img0.cols];
+    
+    auto imgbin = Mat2D!ubyte(data, img0.rows, img0.cols);
+    
+    auto rp = new RegionProps(imgbin);
+    rp.calculateProps();
+    
+    foreach(region; rp.regions){
+        region.orientation.writeln;
+        region.majorAxisLength.writeln;
+        region.area.writeln;
+        region.convexHull.writeln;
+    }
+    
+    
+    return 0;
+}
+  ```
+  
 # Currently supported properties:
     
     spatial raw moments:
