@@ -49,6 +49,7 @@ import std.stdio;
 import opencvd.cvcore;
 import opencvd.highgui;
 import opencvd.imgcodecs;
+import opencvd.imgproc;
 
 import measure.regionprops;
 import measure.types;
@@ -57,8 +58,12 @@ int main()
 {
     Mat img0 = imread("test.png", 0);
     
-    ubyte* rawdata = cast(ubyte*)img0.rawDataPtr();
-    ubyte[] data = rawdata[0..img0.rows*img0.cols];
+    Mat img1 = Mat();
+    threshold(img0, img1, 200, 255, THRESH_BINARY);
+    
+    ubyte* rawdata = cast(ubyte*)img1.rawDataPtr();
+    
+    ubyte[] data = rawdata[0..img1.rows*img1.cols];
     
     auto imgbin = Mat2D!ubyte(data, img0.rows, img0.cols);
     
@@ -72,7 +77,7 @@ int main()
         region.convexHull.writeln;
     }
     
-    
+    waitKey(0);
     return 0;
 }
   ```
